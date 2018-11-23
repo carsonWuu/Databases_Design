@@ -1,0 +1,167 @@
+create table watch_device(
+
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40)  comment 'watch用户ID',
+C_password varchar(40) comment 'watch用户密码',
+C_Phone_number Varchar(15) comment '手机号码',	
+b_Profilephoto blob comment '头像',	
+C_Nickname Varchar(40) comment '昵称',		
+N_Sex tinyint comment '性别：男/女',
+date_birthday datetime comment '出生日期',	
+C_grade Varchar(15) comment '年级', 	
+D_height double comment '身高cm',	
+D_weight double comment '体重kg',
+c_location varchar(99) comment '坐标经纬度',
+text_device text comment '设置的开关：1通话位置、2设置变更、3手表电量、4通讯录消息、5紧急求助、6守护记录、7安全提醒、8手表话费',
+text_manage text comment '管理开关：1上课禁用、2拒接陌生人、3安全守护、4通话位置、5作息提醒、6代收短信、7自动接通、8定时开关机、9接触绑定、10固件版本、11计步开关',
+c_sport varchar(255) comment '运动计步：将每天的步数记录',
+text_watch text comment '手表设置：1铃声音量、2屏幕亮度、3时间格式、4体感接听、5定位模式、6手表短号',
+unique key ukey(c_userID)
+
+);
+
+create table Login (
+	n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+	c_userID varchar(40) comment '用户ID',
+	n_type tinyint comment '设备类型：1APP、2watch',
+	unique key ukey(c_userID)
+
+);
+
+
+create table Location_readable(
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '手表ID',
+n_lng double comment '经度',
+n_lat double comment '纬度',
+T_time datetime comment '坐标上传时间',
+unique key ukey(c_userID)
+);
+
+
+create table Location_unreadable(
+	n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '手表ID',
+c_lng_lat varchar(255) comment '原始数据，待转换为标准经纬度',
+T_time datetime comment '坐标上传时间',
+unique key ukey(c_userID)
+);
+
+create table Message(
+	n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_fromID varchar(40) comment '发送消息的ID',
+n_from_type tinyint comment '标识发送方的设备，1手机APP 、2手表watch',
+c_toID varchar(40) comment '接收消息的ID',
+n_to_type tinyint comment '标识接收方的设备，1手机APP 、2手表watch',
+index index_message(c_toID)
+);
+
+create table Command (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '指令发起者ID',
+c_message varchar(255) comment '指令具体内容',
+date_time datetime comment '指令发起时间',
+unique key ukey(c_userID)
+);
+
+create table Relation (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID1 varchar(40) comment '好友关系人1',
+c_userID2 varchar(40) comment '好友关系人2',
+Unique key ukey(c_userID1,c_userID2)
+);
+
+
+create table APP_informatation (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '用户ID',
+C_password varchar(40) comment '用户密码',
+C_Phone_number Varchar(15) comment '手机号码',	
+b_Profilephoto blob comment '头像',	
+C_Nickname Varchar(40) comment '昵称',		
+N_Sex tinyint comment '性别：男/女',
+date_birthday datetime comment '出生日期',
+Unique key ukey(c_userID)
+);
+
+
+create table Verification (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '用户ID',
+c_verifyCode varchar(20) comment '手机验证码'
+);
+create table chat_group (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_groupOwner varchar(40) comment '群主ID',
+c_groupID varchar(40) comment '群组ID',
+c_groupNAME varchar(40) comment '群组名称',
+unique key ukey(c_groupID)
+);
+
+create table Group_relation (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID1 varchar(40) comment '好友关系人1',
+c_userID2 varchar(40) comment '好友关系人2',
+c_alias   varchar(40) comment 'userID1存储的别称',
+Unique key ukey(c_userID1,c_userID2)
+);
+create table White_list(
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '用户ID',
+c_white_userID varchar(40) comment '白名单用户',
+index relation(c_userID,c_white_userID)
+
+);
+create table Suggestion (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '用户ID',
+c_suggest varchar(255) comment '用户反馈的意见，限制255个汉字',
+index relation(c_userID)
+);
+create table Shortcode (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment 'watch用户ID',
+text_shortcode text comment '手表短号：							 	 {number:userID,number2:userID2,..,}:{662:18011221133,}',
+Unique key relation(c_userID)
+
+);
+create table Bind  (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_watch_userID varchar(40) comment 'watch用户ID',
+c_app_userID varchar(40) comment 'app用户ID',
+Unique key relation(c_watch_userID,c_app_userID)
+);
+create table Stranger  (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment 'watch用户ID',
+c_stranger varchar(15) comment '陌生人手机号码',
+text_detail text comment '来电详情',
+t_time datetime comment '最近来电',
+Unique key ukey(c_userID,c_stranger)
+);
+
+create table Emoji(
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment '用户ID',
+Emo varchar(255) comment '表情包，需要采用utf8mb4字符集',
+t_time timestamp comment '表情添加时间',
+Unique key ukey(emo)
+);
+
+create table Watch_history(
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment 'watch用户ID',
+c_title varchar(40) comment  '消息标题，如：充电完成、设置变更、紧急求助、上		课禁用、上学守护、陌生来电等',
+c_message  varchar(255) comment  '消息内容',
+t_time timestamp comment '手表消息时间',
+Unique key ukey(c_userID)
+);
+
+create table Sport (
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID varchar(40) comment 'watch用户ID',
+n_target_step int comment '目标步数',
+n_step  int comment '实际步数：将每天的步数记录',
+t_time timestamp comment '上传时间',
+Unique key ukey(c_userID)
+);
