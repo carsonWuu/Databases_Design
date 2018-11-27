@@ -1,0 +1,89 @@
+1.
+create procedure Device_info
+(
+	in  idIn varchar(40),
+	out idOut varchar(40),
+	out phone varchar(15),
+	out deviceIMEI varchar(20),	
+	out phoneIMSI varchar(20),	
+	out devicetype tinyint,
+	out version Varchar(40),
+	out Profilephoto varchar(200),
+	out Nickname Varchar(40) ,
+	out Sex tinyint ,
+	out birthday datetime ,
+	out grade Varchar(15) ,
+	out height double ,
+	out weight double ,
+	out location varchar(255) ,
+	out homeAddress varchar(255) ,
+	out schoolAddress varchar(255) ,
+	out cometime int(15) ,
+	out leavetime int(15) ,
+	out sport varchar(255) 
+	
+)
+begin 
+select c_userID 	
+,C_password
+,C_Phone_number
+,C_deviceIMEI
+,C_phoneIMSI
+,n_devicetype
+,C_version
+,c_Profilephoto
+,C_Nickname
+,N_Sex
+,date_birthday
+,C_grade
+,n_height
+,n_weight
+,c_location
+,C_homeAddress
+,C_schoolAddress
+,n_cometime
+,n_leavetime 
+  
+from watch_device where c_userID=idIn  
+into    idOut,
+	phone,
+	deviceIMEI,
+	phoneIMSI, 	
+	devicetype,
+	version,
+	Profilephoto,
+	Nickname,
+	Sex,
+	birthday,
+	grade,
+	height,
+	weight,
+	location,
+	homeAddress,
+	schoolAddress,
+	cometime,
+	leavetime,
+	sport;	
+
+end;
+
+2.
+create procedure Device_setting
+(
+	in  idin text,
+	
+	out settingout text
+		
+)
+begin 
+select text_device
+  
+from watch_device where c_userID=idin  
+into    settingout	;
+
+end;
+
+3.
+
+
+

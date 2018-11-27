@@ -13,13 +13,13 @@ C_Nickname Varchar(40) comment '昵称',
 N_Sex tinyint comment '性别：男/女',
 date_birthday datetime comment '出生日期',	
 C_grade Varchar(15) comment '年级', 	
-D_height double comment '身高cm',	
-D_weight double comment '体重kg',
+n_height double comment '身高cm',	
+n_weight double comment '体重kg',
 c_location varchar(255) comment '最新的坐标经纬度',
 C_homeAddress varchar(255) comment '家庭地址',
 C_schoolAddress varchar(255) comment '学校地址',
-n_cometime int(15)  comment '上学时间（时间戳）',
-n_leavetime int(15)  comment '放学时间（时间戳）',
+n_cometime int(15)  comment '上学时间(时间戳)',
+n_leavetime int(15)  comment '放学时间(时间戳)',
 text_device text comment '设置的开关：1通话位置、2设置变更、3手表电量、4通讯录消息、5紧急求助、6守护记录、7安全提醒、8手表话费',
 text_manage text comment '管理开关：1上课禁用、2拒接陌生人、3安全守护、4通话位置、5作息提醒、6代收短信、7自动接通、8定时开关机、9接触绑定、10固件版本、11计步开关,上课禁用、安全守护、作息提醒、定时开关机等设置有设置参数',
 c_sport varchar(255) comment '运动计步：将每天的步数记录',
@@ -78,12 +78,6 @@ n_time int(15) comment '指令发起时间(时间戳)',
 unique key ukey(c_userID)
 );
 
-create table Relation (
-n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
-c_userID1 varchar(40) comment '好友关系人1',
-c_userID2 varchar(40) comment '好友关系人2',
-Unique key ukey(c_userID1,c_userID2)
-);
 
 
 create table APP_information (
@@ -108,7 +102,7 @@ n_time int(15) comment '验证时间(时间戳)',
 Unique key ukey(c_userID)
 );
 
-create table chat_group (
+create table Group_chat (
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
 c_groupOwner varchar(40) comment '群主ID',
 c_groupID varchar(40) comment '群组ID',
@@ -116,12 +110,12 @@ c_groupNAME varchar(40) comment '群组名称',
 unique key group_index(c_groupID)
 );
 
-create table Group_relation (
+create table Group_member (
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
-c_userID1 varchar(40) comment '好友关系人1',
-c_userID2 varchar(40) comment '好友关系人2',
-c_alias   varchar(40) comment 'userID1备注的名称',
-Unique key ukey(c_userID1,c_userID2)
+c_groupID varchar(40) comment '群组ID',
+c_userID varchar(40) comment '群成员ID',
+n_type tinyint comment '标识群成员设备',
+unique key group_index(c_groupID,c_userID)
 );
 create table White_list(
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
@@ -159,22 +153,15 @@ n_time int(15) comment '最近来电(时间戳)',
 index ukey(c_userID)
 );
 
-create table Emoji(
-n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
-c_userID varchar(40) comment '用户ID',
-emojiurl  varchar(200) comment  '表情包地址',
-n_time int(15) comment '表情添加时间(时间戳)',
-Unique key ukey(emojiurl )
-);
-
 
 
 create table phone_address(
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
 c_userID varchar(40) comment 'watch用户ID',
+c_familyID varchar(40) comment  '通讯录家人ID',
 c_Phone_number Varchar(15) comment '通讯录家人手机号码',
 c_name varchar(40) comment  '备注名称',
-photourl  varchar(200) comment  '通讯录家人头像地址',
+c_photourl  varchar(200) comment  '通讯录家人头像地址',
 Unique key ukey(c_userID,c_Phone_number)
 );
 
