@@ -70,7 +70,7 @@ end;
 2.
 create procedure Device_setting
 (
-	in  idin text,
+	in  idin varchar(40),
 	
 	out settingout text
 		
@@ -84,6 +84,345 @@ into    settingout	;
 end;
 
 3.
+create procedure Device_manage
+(
+	in  idin varchar(40),
+	
+	out settingout text
+		
+)
+begin 
+select text_manage 
+  
+from watch_device where c_userID=idin  
+into    settingout	;
 
+end;
 
+4.
+create procedure Device_watch
+(
+	in  idin varchar(40),
+	
+	out settingout text
+		
+)
+begin 
+select text_watch 
+  
+from watch_device where c_userID=idin  
+into    settingout	;
 
+end;
+
+5.
+create procedure Device_update_password
+(
+	in  idin varchar(40),
+	
+	in passw varchar(40)
+		
+)
+begin 
+update watch_device set C_password =passw where  c_userID=idin  ;
+
+end;
+
+6.
+create procedure Device_update_profilephoto
+(
+	in  idin varchar(40),
+	
+	in photo varchar(40)
+		
+)
+begin 
+update watch_device set c_Profilephoto =photo where  c_userID=idin  ;
+
+end;
+
+7.
+create procedure Device_update_nickname
+
+(
+	in  idin varchar(40),
+	
+	in name varchar(40)
+		
+)
+begin 
+update watch_device set C_Nickname = name  where  c_userID=idin  ;
+
+end;
+
+8.
+create procedure Device_update_sex
+
+(
+	in  idin varchar(40),
+	
+	in sex tinyint
+		
+)
+begin 
+update watch_device set N_Sex = sex where  c_userID=idin  ;
+
+end;
+
+9.
+create procedure Device_update_birth
+
+(
+	in  idin varchar(40),
+	
+	in birth datetime
+		
+)
+begin 
+update watch_device set date_birthday  = birth where  c_userID=idin  ;
+
+end;
+
+10.
+create procedure Device_update_grade
+
+(
+	in  idin varchar(40),
+	
+	in grade Varchar(15)
+		
+)
+begin 
+update watch_device set C_grade = grade  where  c_userID=idin  ;
+
+end;
+
+11.
+create procedure Device_update_height
+
+(
+	in  idin varchar(40),
+	
+	in height double
+		
+)
+begin 
+update watch_device set n_height = height  where  c_userID=idin  ;
+
+end;
+
+12.
+create procedure Device_update_weight
+
+(
+	in  idin varchar(40),
+	
+	in weight double
+		
+)
+begin 
+update watch_device set n_weight = weight  where  c_userID=idin  ;
+
+end;
+
+13.
+create procedure Device_update_location
+
+(
+	in  idin varchar(40),
+	
+	in location varchar(255)
+		
+)
+begin 
+update watch_device set c_location = location  where  c_userID=idin  ;
+
+end;
+
+14.
+create procedure Device_update_homeAddr
+
+(
+	in  idin varchar(40),
+	
+	in homeAddress varchar(255)
+		
+)
+begin 
+update watch_device set C_homeAddress = homeAddress  where  c_userID=idin  ;
+
+end;
+
+15.
+create procedure Device_update_schoolAddr
+
+(
+	in  idin varchar(40),
+	
+	in schoolAddress varchar(255)
+		
+)
+begin 
+update watch_device set C_schoolAddress = schoolAddress  where  c_userID=idin  ;
+
+end;
+
+16.
+create procedure Device_update_goschool
+
+(
+	in  idin varchar(40),
+	
+	in cometime int(15)
+		
+)
+begin 
+update watch_device set n_cometime = cometime  where  c_userID=idin  ;
+
+end;
+
+17.
+create procedure Device_update_leaveschool
+
+(
+	in  idin varchar(40),
+	
+	in leavetime int(15)
+		
+)
+begin 
+update watch_device set n_leavetime = leavetime where  c_userID=idin  ;
+
+end;
+
+18.
+create procedure Device_update_setting
+
+(
+	in  idin varchar(40),
+	
+	in setting text
+		
+)
+begin 
+update watch_device set text_device = setting where  c_userID=idin  ;
+
+end;
+
+19.
+create procedure Device_update_manage
+
+(
+	in  idin varchar(40),
+	
+	in manage text
+		
+)
+begin 
+update watch_device set text_manage  = manage where  c_userID=idin  ;
+
+end;
+
+20.
+create procedure Device_update_watch
+
+(
+	in  idin varchar(40),
+	
+	in watchtext
+		
+)
+begin 
+update watch_device set text_watch  = watch where  c_userID=idin  ;
+
+end;
+
+21.
+create procedure Device_login_on
+
+(
+	in  idin varchar(40),
+	
+	in type tinyint
+		
+)
+begin 
+insert into Login (c_userID,n_type) values(inid,type);
+
+end;
+
+22.
+create procedure Device_login_islogin
+
+(
+	in  idin varchar(40),
+	
+		
+)
+begin 
+select  c_userID from Login where  c_userID=idin  ;
+
+end;
+
+23.
+create procedure Device_login_off
+
+(
+	in  idin varchar(40),
+	
+		
+)
+begin 
+delete  from Login where  c_userID=idin  ;
+
+end;
+
+24.
+create procedure Device_location_latest
+
+(
+	in  idin varchar(40),
+	out loctype tinyint,
+	out lng double ,
+	out lat double ,
+	out time int(15) 	
+		
+)
+begin 
+select  n_loctype,n_lng,n_lat,n_time  from Login where  c_userID=idin into loctype , lng, lat ,time ;
+
+end;
+
+25.
+create procedure Device_location_period
+
+(
+	in  idin varchar(40),
+	out loctype tinyint,
+	out lng double ,
+	out lat double ,
+	out time int(15) 	
+		
+)
+begin 
+select  n_loctype,n_lng,n_lat,n_time  from Login where  c_userID=idin into loctype , lng, lat ,time ;
+
+end;
+
+26.
+create procedure Device_location_add
+
+(
+	in  idin varchar(40),
+	in loctype tinyint,
+	in lng double ,
+	in lat double ,
+	in time int(15) 	
+		
+)
+begin 
+insert into  (idin ,n_loctype,n_lng,n_lat,n_time) value (idin,loctype , lng, lat ,time) ;
+
+end;
+
+27.
