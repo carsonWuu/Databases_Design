@@ -20,7 +20,7 @@ C_homeAddress varchar(255) comment '家庭地址',
 C_schoolAddress varchar(255) comment '学校地址',
 n_cometime int(15)  comment '上学时间(时间戳)',
 n_leavetime int(15)  comment '放学时间(时间戳)',
-text_device text comment '设置的开关：1通话位置、2设置变更、3手表电量、4通讯录消息、5紧急求助、6守护记录、7安全提醒、8手表话费',
+text_device text comment '设置的开关：1通话位置、2设置变更、3手表电量（预留电量）、4通讯录消息、5紧急求助、6守护记录、7安全提醒、8手表话费、9定时开关机（是否启用,具体开关机时间）',
 text_manage text comment '管理开关：1上课禁用、2拒接陌生人、3安全守护、4通话位置、5作息提醒、6代收短信、7自动接通、8定时开关机、9接触绑定、10固件版本、11计步开关,上课禁用、安全守护、作息提醒、定时开关机等设置有设置参数',
 c_sport varchar(255) comment '运动计步：将每天的步数记录',
 text_watch text comment '手表设置：1铃声音量、2屏幕亮度、3时间格式、4体感接听、5定位模式、6手表短号',
@@ -44,17 +44,18 @@ create table Location_readable(
 	n_lng double comment '经度',
 	n_lat double comment '纬度',
 	n_time int(15) comment '坐标上传时间(时间戳)',
-	unique key ukey(c_userID)
+	unique key ukey(c_userID,n_time)
 );
 
 
-create table Location_unreadable(
+create table Location_unreadable
+(
 	n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
-c_userID varchar(40) comment '手表ID',
-n_loctype tinyint comment'定位类型：1.GPS，2.WiFi，3.模糊定位，4.a-gps定位，5.加速传感器定位',
-c_lng_lat varchar(255) comment '原始数据，待转换为标准经纬度',
-n_time int(15) comment '坐标上传时间(时间戳)',
-unique key ukey(c_userID)
+	c_userID varchar(40) comment '手表ID',
+	n_loctype tinyint comment'定位类型：1.GPS，2.WiFi，3.模糊定位，4.a-gps定位，5.加速传感器定位',
+	c_lng_lat varchar(255) comment '原始数据，待转换为标准经纬度',
+	n_time int(15) comment '坐标上传时间(时间戳)',
+	index ukey(c_userID,n_time)
 );
 
 create table Message(
@@ -64,7 +65,7 @@ n_from_type tinyint comment '标识发送方的设备，1手机APP 、2手表watch',
 n_type tinyint comment'消息类型：1为文字，2为语音，3为表情包',
 c_toID varchar(40) comment '接收消息的ID',
 c_content varchar(500) comment '消息内容',
-c_voiceurl varchar(200) comment '语音文件地址或是表情包地址',
+c_voiceurl varchar(200) comment '语音文件地址',
 n_createtime int(15) comment '消息时间(时间戳)',
 n_to_type tinyint comment '标识接收方的设备，1手机APP 、2手表watch',
 index index_message(c_toID)
@@ -155,13 +156,14 @@ index ukey(c_userID)
 
 
 
-create table phone_address(
+create table Phone_address(
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
 c_userID varchar(40) comment 'watch用户ID',
 c_familyID varchar(40) comment  '通讯录家人ID',
 c_Phone_number Varchar(15) comment '通讯录家人手机号码',
 c_name varchar(40) comment  '备注名称',
 c_photourl  varchar(200) comment  '通讯录家人头像地址',
+n_open tinyint comment  '自动接通设置：1为自动接通,0为不自动接通',
 Unique key ukey(c_userID,c_Phone_number)
 );
 
@@ -175,3 +177,10 @@ index ukey(c_userID)
 );
 
 
+create table Friends(
+n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
+c_userID1 varchar(40) comment '好友关系人1',
+c_userID2 varchar(40) comment '好友关系人2',
+c_alias   varchar(40) comment 'userID1存储的别称',
+Unique key ukey(c_userID1,c_userID2)
+);

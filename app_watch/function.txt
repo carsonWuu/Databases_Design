@@ -382,6 +382,7 @@ create procedure Device_location_latest
 
 (
 	in  idin varchar(40),
+	out idout varchar(40),
 	out loctype tinyint,
 	out lng double ,
 	out lat double ,
@@ -389,7 +390,7 @@ create procedure Device_location_latest
 		
 )
 begin 
-select  n_loctype,n_lng,n_lat,n_time  from Login where  c_userID=idin into loctype , lng, lat ,time ;
+select  c_userID,n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin  order by n_id desc limit 1 into idout ,loctype , lng, lat ,time ;
 
 end;
 
@@ -398,14 +399,17 @@ create procedure Device_location_period
 
 (
 	in  idin varchar(40),
+	in start_time int(15),
+	in end_time int(15),  	
+	out idout varchar(40),
 	out loctype tinyint,
 	out lng double ,
 	out lat double ,
-	out time int(15) 	
+	out time double  	
 		
 )
 begin 
-select  n_loctype,n_lng,n_lat,n_time  from Login where  c_userID=idin into loctype , lng, lat ,time ;
+select  c_userID,n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin and n_time>= start_time and n_time<= end_time   into idout ,loctype , lng, lat ,time ;
 
 end;
 
@@ -421,8 +425,666 @@ create procedure Device_location_add
 		
 )
 begin 
-insert into  (idin ,n_loctype,n_lng,n_lat,n_time) value (idin,loctype , lng, lat ,time) ;
+insert into  Location_readable(c_userID ,n_loctype,n_lng,n_lat,n_time) values(idin,loctype , lng, lat ,time) ;
 
 end;
 
 27.
+create procedure Device_location_origin_latest
+
+(
+	in  idin varchar(40),
+	out idout varchar(40),
+	out loctype tinyint,
+	out lng_lat varchar(255) ,
+	out time int(15) 	
+		
+)
+begin 
+select  c_userID,n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin  order by n_id desc limit 1 into idout ,loctype , lng_lat ,time ;
+
+end;
+
+28.
+create procedure Device_location_origin_period
+
+(
+	in  idin varchar(40),
+	in start_time int(15),
+	in end_time int(15),  	
+	out idout varchar(40),
+	out loctype tinyint,
+	out lng_lat varchar(255),
+	out time double  	
+		
+)
+begin 
+select  c_userID,n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin and n_time>= start_time and n_time<= end_time   into idout ,loctype , lng_lat ,time ;
+
+end;
+
+29.
+create procedure Device_location_origin_add
+
+(
+	in  idin varchar(40),
+	in loctype tinyint,
+	in lng_lat double ,
+	in time int(15) 	
+		
+)
+begin 
+insert into  Location_unreadable(c_userID ,n_loctype,c_lng_lat,n_time) values(idin,loctype , lng_lat ,time) ;
+
+end;
+
+
+30.聊天信息记录
+create procedure Message_add
+
+(
+	in fromID varchar(40),
+	in from_type tinyint,
+	in toID varchar(40),
+	in to_type tinyint,
+	in type tinyint ,
+	in content varchar(500),
+	in url varchar(200),
+	in time int(15) 	
+		
+)
+begin 
+insert into  Message(c_fromID ,n_from_type,c_toID,n_to_type,n_type,c_content,c_voiceurl,n_createtime) values
+(fromID,from_type , toID ,to_type,type,content,url,time) ;
+
+end;
+
+
+31.
+create procedure Message_find
+
+(
+	in fromID varchar(40),
+	in toID varchar(40),
+	out content varchar(500),
+	out type tinyint,
+	out url varchar(200)	
+		
+)
+begin
+select  c_content,n_type,c_voiceurl  from Message where  c_fromID = fromID and c_toID = toID order by n_id desc limit 1 into content,type,url ;
+
+end;
+
+32.
+create procedure Message_delete_receive
+
+(
+	in toID varchar(40)
+		
+		
+)
+begin
+delete  from Message where  c_toID = toID  ;
+
+end;
+
+32.接收方所有信息查询 
+create procedure Message_find_receive
+
+(
+	in toID varchar(40),
+	out content varchar(500),
+	out type tinyint,
+	out url varchar(200)	
+		
+)
+begin
+select  c_content,n_type,c_voiceurl  from Message where  c_toID = toID   into content,type,url ;
+
+end;
+
+33.APP用户信息
+
+create procedure App_info
+(
+	in  idin varchar(40),
+	out phone varchar(15),
+	out Profilephoto varchar(200),	
+	out Nickname Varchar(40) ,
+	out Sex tinyint ,
+	out birthday datetime ,
+	out location varchar(255) 	
+)
+begin 
+select 
+C_Phone_number
+,c_Profilephoto
+,C_Nickname
+,N_Sex
+,date_birthday
+,c_location
+
+
+  
+from APP_information where c_userID = idin  
+into    
+	phone,
+	Profilephoto,
+	Nickname,
+	Sex,
+	birthday,
+	location;
+	
+
+end;
+
+34.密码修改
+create procedure App_update_password
+
+(
+	in  idin varchar(40),
+	
+	in passw varchar(40)
+		
+)
+begin 
+update APP_information set C_password =passw where  c_userID=idin  ;
+
+end;
+
+35.
+create procedure App_update_profilephoto
+
+(
+	in  idin varchar(40),
+	
+	in photo varchar(40)
+		
+)
+begin 
+update APP_information set c_Profilephoto =photo where  c_userID=idin  ;
+
+end;
+
+36.
+create procedure App_update_nickname
+
+(
+	in  idin varchar(40),
+	
+	in name varchar(40)
+		
+)
+begin 
+update APP_information set C_Nickname = name  where  c_userID=idin  ;
+
+end;
+
+37.
+create procedure App_update_sex
+
+(
+	in  idin varchar(40),
+	
+	in sex tinyint
+		
+)
+begin 
+update APP_information set N_Sex = sex where  c_userID=idin  ;
+
+end;
+
+38.
+create procedure App_update_birth
+
+(
+	in  idin varchar(40),
+	
+	in birth datetime
+		
+)
+begin 
+update APP_information set date_birthday  = birth where  c_userID=idin  ;
+
+end;
+
+39.手机号码修改
+create procedure App_update_phone
+
+(
+	in  idin varchar(40),
+	
+	in phone varchar(15)
+		
+)
+begin 
+update APP_information set C_Phone_number  = phone  where  c_userID=idin  ;
+
+end;	
+
+40.最新经纬度坐标修改
+create procedure App_update_location
+
+(
+	in  idin varchar(40),
+	
+	in location  varchar(255)
+		
+)
+begin 
+update APP_information set c_location  = location  where  c_userID=idin  ;
+
+end;	
+
+41.验证码存储
+create procedure Verification_add
+
+(
+	in  idin varchar(40),
+	in  verifycode varchar(20),
+	in  time int(15)
+		
+)
+begin 
+insert into Verification(c_userID ,c_verifyCode,n_time) values(idin ,verifycode,time);
+
+end;
+
+42.
+create procedure Verification_find
+
+(
+	in  idin varchar(40)
+		
+)
+begin 
+select c_userID ,c_verifyCode,n_time  from Verification where c_userID=idin ;
+
+end;	
+
+43.群组信息
+
+create procedure Group_create
+
+(
+	
+	in  groupowner varchar(40),
+	in  groupid varchar(40),
+	in groupname varchar(40)
+		
+)
+begin 
+insert into Group_chat(c_groupOwner ,c_groupID ,c_groupNAME ) values(groupowner  ,groupid,groupname );
+
+end;
+
+
+44.
+create procedure Group_delete
+
+(
+	
+	in  groupowner varchar(40),
+	in  groupid varchar(40)
+	
+		
+)
+begin 
+delete from  Group_chat where c_groupOwner = groupowner  and c_groupID = groupid ;
+
+end;
+
+45.
+
+create procedure Group_find
+(
+	
+	in  groupid varchar(40),
+	out groupname varchar(40),
+	out id varchar(40),
+	out groupowner varchar(40)
+		
+)
+begin 
+select c_groupOwner ,c_groupID ,c_groupNAME from Group_chat  
+	where c_groupID = groupid into groupowner,id,groupname;
+
+end;
+
+46.群成员信息
+create procedure GroupMember_find
+(
+	
+	in  groupid varchar(40),
+	out userid varchar(40),
+	out type tinyint
+		
+)
+begin 
+select c_userID ,n_type   from Group_member   
+	where c_groupID = groupid into userid ,type ;
+
+end;
+
+47.
+create procedure GroupMember_add
+
+(
+	
+	in  groupid varchar(40),
+	in  userid varchar(40),
+	in  type tinyint
+		
+)
+begin 
+insert into  Group_member(c_groupID ,c_userID ,n_type) values(groupid,userid ,type ); 
+
+end;
+
+48.
+create procedure GroupMember_kick
+
+(
+	
+	in  groupid varchar(40),
+	in  userid varchar(40)	
+		
+)
+begin 
+delete from  Group_member where c_groupID = groupid and   c_userID = userid ; 
+
+end;
+
+49.
+create procedure GroupMember_exist
+
+(
+	
+	in  groupid varchar(40),
+	in  userid varchar(40),
+	out id varchar(40)	
+		
+)
+begin 
+select c_groupID from  Group_member where c_groupID = groupid and   c_userID = userid into id; 
+
+end;
+
+50~53.设备白名单信息暂时没有
+
+54.手表短号
+create procedure Shortcode_show
+
+(
+	in  userid varchar(40),
+	out shortcode text	
+		
+)
+begin 
+select text_shortcode from  Shortcode where  c_userID = userid into shortcode ; 
+
+end;
+
+55.
+create procedure Shortcode_update
+
+(
+	in  userid varchar(40),
+	in  shortcode text	
+		
+)
+begin 
+update Shortcode set text_shortcode  = shortcode  where  c_userID=userid  ;
+
+end;
+
+56.意见信息
+create procedure Suggestion_add
+
+(
+	in  userid varchar(40),
+	in  suggest varchar(255),
+	in  time int(15)	
+		
+)
+begin 
+insert into Suggestion(c_userID,c_suggest,n_suggest) values(userid,suggest ,time);
+
+end;
+
+
+57.
+create procedure Suggestion_find_latest
+
+(
+	in  userid varchar(40),
+	out suggest varchar(255),
+	out time int(15)	
+		
+)
+begin 
+select  c_suggest,n_suggest from Suggestion where c_userID  = userid order by c_userID desc limit 1 
+into suggest,time;
+
+end;
+
+58.
+create procedure Suggestion_find
+
+(
+	in  userid varchar(40),
+	out suggest varchar(255),
+	out time int(15)	
+		
+)
+begin 
+select  c_suggest,n_suggest from Suggestion where c_userID  = userid
+into suggest,time;
+
+end;
+
+59.绑定信息
+create procedure Bind_Device_find
+
+(
+	in  userid varchar(40),
+	out app_user varchar(40)
+		
+)
+begin 
+select  c_app_userID   from Bind  where c_watch_userID  = userid
+into app_user ;
+
+end;
+
+60.
+create procedure Bind_App_find
+
+(
+	in  app_user varchar(40),
+	out watch_userid varchar(40)
+		
+)
+begin 
+select  c_watch_userID   from Bind  where c_app_userID  = app_user
+into watch_userid ;
+
+end;
+
+61.
+create procedure Bind_add
+
+(
+	in  app_user varchar(40),
+	in watch_userid varchar(40)
+		
+)
+begin 
+insert into Bind(c_watch_userID,c_app_userID) values(watch_userid ,app_user);
+
+end;
+
+62.
+create procedure Bind_delete
+
+(
+	in  app_user varchar(40),
+	in  watch_userid varchar(40)
+		
+)
+begin 
+delete from  Bind where c_watch_userID = watch_userid and c_app_userID = app_user;
+
+end;
+
+63.设备的陌生人来电信息
+
+create procedure Device_stranger_show
+
+(
+	in  userid varchar(40),
+	in  starttime int(15),
+	in  endtime int(15),
+	out stranger varchar(15),
+	out time int(15),
+	out detail text		
+)
+begin 
+select c_stranger,n_time,text_detail from  Stranger  where c_userID  = userid and n_time>=starttime and n_time<=endtime into stranger,time,detail;
+
+end;
+
+64.
+create procedure Device_stranger_add
+
+(
+	in  userid varchar(40),
+	in  stranger varchar(15),
+	in  time int(15),
+	in  detail text		
+)
+begin 
+insert into Stranger(c_userID , c_stranger,n_time,text_detail) values( userid ,stranger,time,detail);
+
+end; 
+
+65.
+create procedure Device_stranger_show_latest
+
+(
+	in  userid varchar(40),
+	out stranger varchar(15),
+	out time int(15),
+	out detail text		
+)
+begin 
+select c_stranger,n_time,text_detail from  Stranger  where c_userID  = userid order by n_id desc limit 1 
+into stranger,time,detail;
+
+end;
+
+66.设备通讯录
+create procedure Device_address_show
+
+(
+	in  userid varchar(40),
+	out familyid varchar(40),
+	out phone varchar(15),
+	out name varchar(40),
+	out photourl varchar(200)
+		
+)
+begin 
+select c_familyID,c_Phone_number,c_name,c_photourl from  phone_address  where c_userID  = userid
+ into familyid,phone,name,photourl;
+
+end;
+
+67.
+create procedure Device_address_add
+
+(
+	in  userid varchar(40),
+	in familyid varchar(40),
+	in phone varchar(15),
+	in name varchar(40),
+	in photourl varchar(200)
+		
+)
+begin 
+insert into Phone_address( c_userID,c_familyID,c_Phone_number,c_name,c_photourl)  values( userid,familyid,phone,name,photourl);
+
+end;
+
+68.
+create procedure Device_address_delete
+
+(
+	in  userid varchar(40),
+	in  familyid varchar(40)
+	
+		
+)
+begin 
+delete from  phone_address where c_userID  = userid and   c_familyID  = familyid ;   
+
+end;
+
+69.
+create procedure Device_address_exist
+
+(
+	in  userid varchar(40),
+	in  familyid varchar(40),
+	out id varchar(40),
+	out name varchar(40)
+		
+)
+begin 
+select c_familyID,c_name from  phone_address  where c_userID  = userid and c_familyID=familyid 
+ into id,name;
+end;
+
+70.
+create procedure Device_watch_history_add
+
+(
+	in  userid varchar(40),
+	in  title varchar(40),
+	in  message varchar(255)
+		
+)
+begin 
+insert into Watch_history(c_userID,c_title,c_message) values(userid,title ,message);
+
+end;
+
+
+71.
+create procedure Device_watch_history_show
+
+(
+	in  userid varchar(40),
+	out title varchar(40),
+	out message varchar(255),
+	out time timestamp	
+		
+)
+begin 
+select  c_title,c_message,t_time from Watch_history where c_userID  = userid 
+into title ,message,time;
+
+end;
+
+
+73.app添加通讯录好友
+create procedure App_friends_add
+(
+	in userid1 varchar(40),
+	in userid2 varchar(40),
+	in alias varchar(40)
+)
+begin
+insert into Friends(c_userID1,c_userID2,c_alias) values(userid1,userid2,alias);
+end;
