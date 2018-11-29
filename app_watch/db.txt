@@ -160,11 +160,12 @@ create table Phone_address(
 n_id int PRIMARY KEY AUTO_INCREMENT comment '自增变量',
 c_userID varchar(40) comment 'watch用户ID',
 c_familyID varchar(40) comment  '通讯录家人ID',
-c_Phone_number Varchar(15) comment '通讯录家人手机号码',
 c_name varchar(40) comment  '备注名称',
 c_photourl  varchar(200) comment  '通讯录家人头像地址',
 n_open tinyint comment  '自动接通设置：1为自动接通,0为不自动接通',
-Unique key ukey(c_userID,c_Phone_number)
+n_shortcode int(15) comment '设备与通讯录家人之间的短号',
+Unique key ukey(c_userID,c_familyID),
+Unique key ukey2(c_userID,n_shortcode)
 );
 
 create table Watch_history(

@@ -1,0 +1,9 @@
+call Device_update_watch("userID","{
+ 
+ '铃声音量': 'on',
+ '屏幕亮度': 'on',
+ '时间格式': 'on',
+ '体感接听': 'on',
+ '定位模式': 'on'
+
+}");

@@ -2,7 +2,7 @@
 create procedure Device_info
 (
 	in  idIn varchar(40),
-	out idOut varchar(40),
+	
 	out phone varchar(15),
 	out deviceIMEI varchar(20),	
 	out phoneIMSI varchar(20),	
@@ -19,13 +19,12 @@ create procedure Device_info
 	out homeAddress varchar(255) ,
 	out schoolAddress varchar(255) ,
 	out cometime int(15) ,
-	out leavetime int(15) ,
-	out sport varchar(255) 
+	out leavetime int(15) 
 	
 )
 begin 
-select c_userID 	
-,C_password
+select 	
+C_password
 ,C_Phone_number
 ,C_deviceIMEI
 ,C_phoneIMSI
@@ -45,7 +44,7 @@ select c_userID
 ,n_leavetime 
   
 from watch_device where c_userID=idIn  
-into    idOut,
+into    
 	phone,
 	deviceIMEI,
 	phoneIMSI, 	
@@ -62,8 +61,7 @@ into    idOut,
 	homeAddress,
 	schoolAddress,
 	cometime,
-	leavetime,
-	sport;	
+	leavetime;	
 
 end;
 
@@ -71,15 +69,15 @@ end;
 create procedure Device_setting
 (
 	in  idin varchar(40),
-	
+	out location varchar(255),
 	out settingout text
 		
 )
 begin 
-select text_device
+select c_location,text_device
   
 from watch_device where c_userID=idin  
-into    settingout	;
+into   location, settingout	;
 
 end;
 
@@ -329,7 +327,7 @@ create procedure Device_update_watch
 (
 	in  idin varchar(40),
 	
-	in watchtext
+	in watch text
 		
 )
 begin 
@@ -347,7 +345,7 @@ create procedure Device_login_on
 		
 )
 begin 
-insert into Login (c_userID,n_type) values(inid,type);
+insert into Login (c_userID,n_type) values(idin,type);
 
 end;
 
@@ -355,12 +353,13 @@ end;
 create procedure Device_login_islogin
 
 (
-	in  idin varchar(40),
-	
+	in idin varchar(40),
+	out id varchar(40)
 		
 )
 begin 
-select  c_userID from Login where  c_userID=idin  ;
+select  c_userID from Login where  c_userID=idin 
+ into id;
 
 end;
 
@@ -368,7 +367,7 @@ end;
 create procedure Device_login_off
 
 (
-	in  idin varchar(40),
+	in  idin varchar(40)
 	
 		
 )
@@ -382,7 +381,7 @@ create procedure Device_location_latest
 
 (
 	in  idin varchar(40),
-	out idout varchar(40),
+	
 	out loctype tinyint,
 	out lng double ,
 	out lat double ,
@@ -390,7 +389,8 @@ create procedure Device_location_latest
 		
 )
 begin 
-select  c_userID,n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin  order by n_id desc limit 1 into idout ,loctype , lng, lat ,time ;
+select  n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin  order by n_id desc limit 1 
+into loctype , lng, lat ,time ;
 
 end;
 
@@ -400,16 +400,12 @@ create procedure Device_location_period
 (
 	in  idin varchar(40),
 	in start_time int(15),
-	in end_time int(15),  	
-	out idout varchar(40),
-	out loctype tinyint,
-	out lng double ,
-	out lat double ,
-	out time double  	
+	in end_time int(15) 	
+		
 		
 )
 begin 
-select  c_userID,n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin and n_time>= start_time and n_time<= end_time   into idout ,loctype , lng, lat ,time ;
+select  n_loctype,n_lng,n_lat,n_time  from Location_readable where  c_userID=idin and n_time>= start_time and n_time<= end_time   ;
 
 end;
 
@@ -434,14 +430,15 @@ create procedure Device_location_origin_latest
 
 (
 	in  idin varchar(40),
-	out idout varchar(40),
+	
 	out loctype tinyint,
 	out lng_lat varchar(255) ,
 	out time int(15) 	
 		
 )
 begin 
-select  c_userID,n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin  order by n_id desc limit 1 into idout ,loctype , lng_lat ,time ;
+select  n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin  order by n_id desc limit 1 
+into loctype , lng_lat ,time ;
 
 end;
 
@@ -451,15 +448,11 @@ create procedure Device_location_origin_period
 (
 	in  idin varchar(40),
 	in start_time int(15),
-	in end_time int(15),  	
-	out idout varchar(40),
-	out loctype tinyint,
-	out lng_lat varchar(255),
-	out time double  	
+	in end_time int(15)	
 		
 )
 begin 
-select  c_userID,n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin and n_time>= start_time and n_time<= end_time   into idout ,loctype , lng_lat ,time ;
+select  n_loctype,c_lng_lat,n_time  from Location_unreadable where  c_userID=idin and n_time>= start_time and n_time<= end_time   ;
 
 end;
 
@@ -469,7 +462,7 @@ create procedure Device_location_origin_add
 (
 	in  idin varchar(40),
 	in loctype tinyint,
-	in lng_lat double ,
+	in lng_lat varchar(255) ,
 	in time int(15) 	
 		
 )
@@ -505,14 +498,11 @@ create procedure Message_find
 
 (
 	in fromID varchar(40),
-	in toID varchar(40),
-	out content varchar(500),
-	out type tinyint,
-	out url varchar(200)	
+	in toID varchar(40)	
 		
 )
 begin
-select  c_content,n_type,c_voiceurl  from Message where  c_fromID = fromID and c_toID = toID order by n_id desc limit 1 into content,type,url ;
+select  c_content,n_type,c_voiceurl  from Message where  c_fromID = fromID and c_toID = toID;
 
 end;
 
@@ -525,7 +515,7 @@ create procedure Message_delete_receive
 		
 )
 begin
-delete  from Message where  c_toID = toID  ;
+delete  from Message where  c_toID = toID ;
 
 end;
 
@@ -533,14 +523,11 @@ end;
 create procedure Message_find_receive
 
 (
-	in toID varchar(40),
-	out content varchar(500),
-	out type tinyint,
-	out url varchar(200)	
+	in toID varchar(40)
 		
 )
 begin
-select  c_content,n_type,c_voiceurl  from Message where  c_toID = toID   into content,type,url ;
+select  c_fromID,c_content,n_type,c_voiceurl  from Message where  c_toID = toID   ;
 
 end;
 
@@ -695,11 +682,13 @@ end;
 create procedure Verification_find
 
 (
-	in  idin varchar(40)
+	in  idin varchar(40),
+	out code varchar(20)
 		
 )
 begin 
-select c_userID ,c_verifyCode,n_time  from Verification where c_userID=idin ;
+select c_verifyCode  from Verification where c_userID=idin 
+into code;
 
 end;	
 
@@ -864,7 +853,7 @@ create procedure Suggestion_find_latest
 		
 )
 begin 
-select  c_suggest,n_suggest from Suggestion where c_userID  = userid order by c_userID desc limit 1 
+select  c_suggest,n_suggest from Suggestion where c_userID  = userid order by n_id desc limit 1 
 into suggest,time;
 
 end;
@@ -873,14 +862,11 @@ end;
 create procedure Suggestion_find
 
 (
-	in  userid varchar(40),
-	out suggest varchar(255),
-	out time int(15)	
+	in  userid varchar(40)
 		
 )
 begin 
-select  c_suggest,n_suggest from Suggestion where c_userID  = userid
-into suggest,time;
+select  c_suggest,n_suggest from Suggestion where c_userID  = userid;
 
 end;
 
@@ -888,13 +874,10 @@ end;
 create procedure Bind_Device_find
 
 (
-	in  userid varchar(40),
-	out app_user varchar(40)
-		
+	in  userid varchar(40)
 )
 begin 
-select  c_app_userID   from Bind  where c_watch_userID  = userid
-into app_user ;
+select  c_app_userID   from Bind  where c_watch_userID  = userid;
 
 end;
 
@@ -902,13 +885,10 @@ end;
 create procedure Bind_App_find
 
 (
-	in  app_user varchar(40),
-	out watch_userid varchar(40)
-		
+	in  app_user varchar(40)	
 )
 begin 
-select  c_watch_userID   from Bind  where c_app_userID  = app_user
-into watch_userid ;
+select  c_watch_userID   from Bind  where c_app_userID  = app_user;
 
 end;
 
@@ -916,8 +896,9 @@ end;
 create procedure Bind_add
 
 (
-	in  app_user varchar(40),
-	in watch_userid varchar(40)
+	in  watch_userid varchar(40),
+	in  app_user varchar(40)
+	
 		
 )
 begin 
@@ -929,8 +910,9 @@ end;
 create procedure Bind_delete
 
 (
-	in  app_user varchar(40),
-	in  watch_userid varchar(40)
+	in  watch_userid varchar(40),
+	in  app_user varchar(40)
+
 		
 )
 begin 
@@ -945,13 +927,10 @@ create procedure Device_stranger_show
 (
 	in  userid varchar(40),
 	in  starttime int(15),
-	in  endtime int(15),
-	out stranger varchar(15),
-	out time int(15),
-	out detail text		
+	in  endtime int(15)	
 )
 begin 
-select c_stranger,n_time,text_detail from  Stranger  where c_userID  = userid and n_time>=starttime and n_time<=endtime into stranger,time,detail;
+select c_stranger,n_time,text_detail from  Stranger  where c_userID  = userid and n_time>=starttime and n_time<=endtime;
 
 end;
 
@@ -988,16 +967,12 @@ end;
 create procedure Device_address_show
 
 (
-	in  userid varchar(40),
-	out familyid varchar(40),
-	out phone varchar(15),
-	out name varchar(40),
-	out photourl varchar(200)
+	in  userid varchar(40)
 		
 )
 begin 
-select c_familyID,c_Phone_number,c_name,c_photourl from  phone_address  where c_userID  = userid
- into familyid,phone,name,photourl;
+select c_familyID,c_name,c_photourl ,n_open n_shortcode from  Phone_address  where c_userID  = userid
+ into familyid,name,photourl,open,shortcode;
 
 end;
 
@@ -1007,13 +982,12 @@ create procedure Device_address_add
 (
 	in  userid varchar(40),
 	in familyid varchar(40),
-	in phone varchar(15),
 	in name varchar(40),
 	in photourl varchar(200)
 		
 )
 begin 
-insert into Phone_address( c_userID,c_familyID,c_Phone_number,c_name,c_photourl)  values( userid,familyid,phone,name,photourl);
+insert into Phone_address( c_userID,c_familyID,c_name,c_photourl)  values( userid,familyid,name,photourl);
 
 end;
 
@@ -1028,6 +1002,34 @@ create procedure Device_address_delete
 )
 begin 
 delete from  phone_address where c_userID  = userid and   c_familyID  = familyid ;   
+
+end;
+
+68.
+create procedure Device_address_shortcode_update
+(
+	in  userid varchar(40),
+	in  familyid varchar(40),
+	in  shortcode int(15)
+	
+		
+)
+begin 
+update  Phone_address set n_shortcode = shortcode  where c_userID  = userid and   c_familyID  = familyid ;   
+
+end;
+
+69.修改设备-家人自动接通关系
+create procedure Device_address_autorecv_update
+
+(
+	in  userid varchar(40),
+	in  familyid varchar(40),
+	in  open tinyint
+		
+)
+begin 
+update Phone_address set n_open = open where c_userID  = userid and c_familyID = familyid;
 
 end;
 
@@ -1065,20 +1067,16 @@ end;
 create procedure Device_watch_history_show
 
 (
-	in  userid varchar(40),
-	out title varchar(40),
-	out message varchar(255),
-	out time timestamp	
+	in  userid varchar(40)
 		
 )
 begin 
-select  c_title,c_message,t_time from Watch_history where c_userID  = userid 
-into title ,message,time;
+select  c_title,c_message,t_time from Watch_history where c_userID  = userid ;
 
 end;
 
 
-73.app添加通讯录好友
+72.app添加通讯录好友
 create procedure App_friends_add
 (
 	in userid1 varchar(40),
@@ -1087,4 +1085,16 @@ create procedure App_friends_add
 )
 begin
 insert into Friends(c_userID1,c_userID2,c_alias) values(userid1,userid2,alias);
+end;
+
+73.
+create procedure App_friend_show
+(
+	in  userID1 varchar(40),
+	out userID2 varchar(40),
+	out alias varchar(40)
+)
+begin
+select c_userID2,c_alias from Friends where c_userID1 = userID1 
+into userID2,alias;
 end;
